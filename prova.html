@@ -1,0 +1,378 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>sc_igor - Identidade Secreta</title>
+    <style>
+        /* Reset básico e configurações globais */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        /* Container principal usando CSS Grid - organiza os cards em grid responsivo */
+        .sc_igor_container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+            min-height: 80vh;
+        }
+
+        /* Header com título e botão de transformação - sempre fixo no topo */
+        .sc_igor_header {
+            grid-column: 1 / -1;
+            text-align: center;
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        }
+
+        .sc_igor_titulo {
+            font-size: 2.5rem;
+            margin-bottom: 20px;
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        /* Botão de transformação com efeito hover e animação */
+        .sc_igor_btn_transformar {
+            background: linear-gradient(45deg, #ff6b6b, #feca57);
+            color: white;
+            border: none;
+            padding: 15px 40px;
+            font-size: 1.2rem;
+            font-weight: bold;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 5px 15px rgba(255, 107, 107, 0.4);
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        .sc_igor_btn_transformar:hover {
+            transform: translateY(-3px) scale(1.05);
+            box-shadow: 0 10px 25px rgba(255, 107, 107, 0.6);
+        }
+
+        /* Estilo base dos cards - todos os cards herdam deste estilo */
+        .sc_igor_card {
+            background: rgba(255, 255, 255, 0.95);
+            padding: 30px;
+            border-radius: 20px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+            transition: all 0.5s ease;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .sc_igor_card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 5px;
+            background: linear-gradient(90deg, #667eea, #764ba2);
+        }
+
+        /* Card especial do perfil com foto maior */
+        .sc_igor_card_perfil {
+            grid-column: span 2;
+        }
+
+        .sc_igor_foto {
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            object-fit: cover;
+            margin: 0 auto 20px;
+            border: 5px solid #667eea;
+            transition: all 0.5s ease;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        }
+
+        .sc_igor_nome {
+            font-size: 2rem;
+            margin-bottom: 10px;
+            font-weight: bold;
+            color: #333;
+        }
+
+        .sc_igor_descricao {
+            font-size: 1.1rem;
+            color: #666;
+            margin-bottom: 20px;
+            line-height: 1.6;
+        }
+
+        .sc_igor_dados {
+            font-size: 1rem;
+            color: #555;
+            margin-bottom: 10px;
+        }
+
+        /* Classe para modo herói - muda drasticamente as cores */
+        .sc_igor_hero-mode .sc_igor_container {
+            background: linear-gradient(135deg, #ff416c 0%, #ff4b2b 100%);
+        }
+
+        .sc_igor_hero-mode .sc_igor_card {
+            background: rgba(0, 0, 0, 0.9);
+            color: white;
+        }
+
+        .sc_igor_hero-mode .sc_igor_card::before {
+            background: linear-gradient(90deg, #ff416c, #ff4b2b);
+        }
+
+        .sc_igor_hero-mode .sc_igor_foto {
+            border-color: #ff416c;
+            box-shadow: 0 0 30px rgba(255, 65, 108, 0.6);
+        }
+
+        .sc_igor_hero-mode .sc_igor_nome {
+            color: #fff;
+            text-shadow: 0 0 20px rgba(255, 255, 255, 0.5);
+        }
+
+        .sc_igor_hero-mode .sc_igor_btn_transformar {
+            background: linear-gradient(45deg, #00f260, #0575e6);
+            box-shadow: 0 5px 15px rgba(0, 242, 96, 0.4);
+        }
+
+        /* Media Query para tablets - 2 colunas */
+        @media (max-width: 768px) {
+            /* Em tablets, organiza em 2 colunas e ajusta tamanhos */
+            .sc_igor_container {
+                grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+                gap: 20px;
+                padding: 10px;
+            }
+            
+            .sc_igor_card_perfil {
+                grid-column: span 1;
+            }
+            
+            .sc_igor_titulo {
+                font-size: 2rem;
+            }
+        }
+
+        /* Media Query para celulares - empilha todos os cards verticalmente */
+        @media (max-width: 480px) {
+            /* Em celulares, todos os cards ficam em coluna única para melhor legibilidade */
+            .sc_igor_container {
+                grid-template-columns: 1fr;
+                gap: 15px;
+                padding: 5px;
+            }
+            
+            body {
+                padding: 10px;
+            }
+            
+            .sc_igor_card {
+                padding: 20px;
+            }
+            
+            .sc_igor_foto {
+                width: 120px;
+                height: 120px;
+            }
+            
+            .sc_igor_titulo {
+                font-size: 1.5rem;
+            }
+            
+            .sc_igor_btn_transformar {
+                padding: 12px 30px;
+                font-size: 1rem;
+            }
+        }
+
+        /* Animação de fade-in para cards quando transformam */
+        @keyframes sc_igor_fadeTransform {
+            0% { opacity: 0; transform: scale(0.8) rotate(-5deg); }
+            50% { opacity: 0.7; transform: scale(1.1) rotate(2deg); }
+            100% { opacity: 1; transform: scale(1) rotate(0deg); }
+        }
+
+        .sc_igor_transforming {
+            animation: sc_igor_fadeTransform 0.6s ease;
+        }
+    </style>
+</head>
+<body>
+    <div class="sc_igor_container">
+        <!-- Header com título e botão de transformação -->
+        <div class="sc_igor_header">
+            <h1 class="sc_igor_titulo" id="sc_igor_titulo">Quem sou eu?</h1>
+            <button class="sc_igor_btn_transformar" id="sc_igor_btn_transformar">
+                Transformar!
+            </button>
+        </div>
+
+        <!-- Card Principal - Perfil -->
+        <div class="sc_igor_card sc_igor_card_perfil">
+            <img id="sc_igor_foto" class="sc_igor_foto" 
+                 src="https://www.opovo.com.br/_midias/jpg/2022/12/18/messi_argentina_taca_titulo_copa_do_mundo__6_-20575432.jpg" 
+                 alt="Foto de Igor">
+            <h2 id="sc_igor_nome" class="sc_igor_nome">Igor Santos Oliveira</h2>
+            <p id="sc_igor_descricao" class="sc_igor_descricao">
+                Desenvolvedor full-stack apaixonado por tecnologia e games. Viciado na pratica esportiva!
+            </p>
+        </div>
+
+        <!-- Card Idade e Time do Coração -->
+        <div class="sc_igor_card">
+            <h3>Idade & Time do Coração</h3>
+            <p id="sc_igor_idade_time" class="sc_igor_dados">
+                19 anos • Conthians
+            </p>
+        </div>
+
+        <!-- Card Comida Predileta -->
+        <div class="sc_igor_card">
+            <h3>Comida Predileta</h3>
+            <p id="sc_igor_comida" class="sc_igor_dados">
+                Hamburguer artesanal 🍔 e coxinha de frango 🥟
+            </p>
+        </div>
+
+        <!-- Card Habilidades -->
+        <div class="sc_igor_card">
+            <h3>Habilidades</h3>
+            <p id="sc_igor_habilidades" class="sc_igor_dados">
+                Programar, joga futebol, academia, desenhar, facilidade em apresentação
+            </p>
+        </div>
+
+        <!-- Card Sonho -->
+        <div class="sc_igor_card">
+            <h3>Meu Sonho</h3>
+            <p id="sc_igor_sonho" class="sc_igor_dados">
+                Desenvolver games AAA que revolucionem a indústria dos videogames
+            </p>
+        </div>
+    </div>
+
+    <script>
+        // Dados da identidade civil (Igor)
+        const sc_igor_dadosCivil = {
+            titulo: "Quem sou eu?",
+            nome: "Igor Santos Oliveira",
+            foto: "https://www.opovo.com.br/_midias/jpg/2022/12/18/messi_argentina_taca_titulo_copa_do_mundo__6_-20575432.jpg",
+            descricao: "Desenvolvedor full-stack apaixonado por tecnologia e games. Sempre criando soluções inovadoras!",
+            idadeTime: "19 anos • Corinthians",
+            comida: "Hamburguer artesanal 🍔 e coxinha de frango 🥟",
+            habilidades: "Programar, joga futebol, academia, desenhar, facilidade em apresentação",
+            sonho: "Desenvolver games AAA que revolucionem a indústria dos videogames"
+        };
+
+        // Dados da identidade herói (Homem de Ferro)
+        const sc_igor_dadosHeroi = {
+            titulo: "Tony Stark - Homem de Ferro",
+            nome: "Homem de Ferro",
+            foto: "https://static.wikia.nocookie.net/p__/images/f/fe/Avengers_Endgame_poster_041_Variant_Textless.jpg/revision/latest/scale-to-width/360?cb=20190919010656&path-prefix=protagonist",
+            descricao: "Gênio, bilionário, playboy, filantropo. O melhor engenheiro do mundo com armadura de alta tecnologia!",
+            idadeTime: "42 anos • Vingadores 🛡️",
+            comida: "Whisky escocês premium 🥃 e cheeseburger com bacon 🔥",
+            habilidades: "Armadura Mark LXXXV, IA JARVIS, reator arc, voo supersônico, mísseis, lasers",
+            sonho: "Proteger o mundo com tecnologia avançada e acabar com guerras através da inovação"
+        };
+
+        // Estado atual da transformação (true = herói, false = civil)
+        let sc_igor_eHeroi = false;
+
+        // Função principal que gerencia a transformação completa da página
+        function sc_igor_transformar() {
+            /*
+                Função principal que alterna entre identidade civil e herói.
+                Atualiza todos os elementos do DOM e aplica/remov classes de estilo.
+                Usa uma flag para controlar o estado atual da transformação.
+            */
+            
+            sc_igor_eHeroi = !sc_igor_eHeroi;
+            const dados = sc_igor_eHeroi ? sc_igor_dadosHeroi : sc_igor_dadosCivil;
+            
+            // Adiciona classe de animação temporária para efeito visual
+            document.body.classList.add('sc_igor_transforming');
+            
+            // Atualiza todos os elementos com animação
+            sc_igor_atualizarElemento('sc_igor_titulo', dados.titulo);
+            sc_igor_atualizarElemento('sc_igor_nome', dados.nome);
+            sc_igor_atualizarElemento('sc_igor_descricao', dados.descricao);
+            sc_igor_atualizarElemento('sc_igor_idade_time', dados.idadeTime);
+            sc_igor_atualizarElemento('sc_igor_comida', dados.comida);
+            sc_igor_atualizarElemento('sc_igor_habilidades', dados.habilidades);
+            sc_igor_atualizarElemento('sc_igor_sonho', dados.sonho);
+            
+            // Atualiza a foto com efeito especial
+            const foto = document.getElementById('sc_igor_foto');
+            foto.src = dados.foto;
+            
+            // Remove classe hero-mode ou adiciona dependendo do estado
+            const container = document.querySelector('.sc_igor_container');
+            if (sc_igor_eHeroi) {
+                document.body.classList.add('sc_igor_hero-mode');
+                document.querySelector('.sc_igor_btn_transformar').textContent = 'Voltar à normalidade!';
+            } else {
+                document.body.classList.remove('sc_igor_hero-mode');
+                document.querySelector('.sc_igor_btn_transformar').textContent = 'Transformar!';
+            }
+            
+            // Remove animação após completar
+            setTimeout(() => {
+                document.body.classList.remove('sc_igor_transforming');
+            }, 600);
+        }
+
+        // Função auxiliar que atualiza o conteúdo de um elemento com animação
+        function sc_igor_atualizarElemento(id, novoConteudo) {
+            /*
+                Função auxiliar que aplica efeito de fade-out/fade-in
+                ao atualizar o conteúdo de qualquer elemento da página.
+            */
+            const elemento = document.getElementById(id);
+            elemento.style.opacity = '0';
+            elemento.style.transition = 'opacity 0.3s ease';
+            
+            setTimeout(() => {
+                elemento.textContent = novoConteudo;
+                elemento.style.opacity = '1';
+            }, 150);
+        }
+
+        // Event listener do botão - chama a função de transformação
+        document.getElementById('sc_igor_btn_transformar').addEventListener('click', sc_igor_transformar);
+
+        // Inicialização - garante que a página carregue na identidade civil
+        document.addEventListener('DOMContentLoaded', function() {
+            /*
+                Event listener que executa quando o DOM está completamente carregado.
+                Garante que todos os elementos estejam disponíveis antes de adicionar interatividade.
+            */
+            console.log('Página sc_igor carregada - pronta para transformação!');
+        });
+    </script>
+</body>
+</html>
